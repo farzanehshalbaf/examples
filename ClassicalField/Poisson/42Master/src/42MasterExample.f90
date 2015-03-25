@@ -284,6 +284,7 @@ PROGRAM LINEARPOISSONEXAMPLE
   !Create the equations set dependent field variables
   CALL CMISSField_Initialise(DependentField,Err)
   CALL CMISSEquationsSet_DependentCreateStart(EquationsSet,DependentFieldUserNumber,DependentField,Err)
+  CALL CMISSField_VariableLabelSet(DependentField,CMISS_FIELD_U_VARIABLE_TYPE,'General',Err)
   CALL CMISSEquationsSet_DependentCreateFinish(EquationsSet,Err)
 
   !Initialise the field values
@@ -293,6 +294,7 @@ PROGRAM LINEARPOISSONEXAMPLE
   !Create the equations set material field variables
   CALL CMISSField_Initialise(MaterialsField,Err)
   CALL CMISSEquationsSet_MaterialsCreateStart(EquationsSet,MaterialsFieldUserNumber,MaterialsField,Err)
+  CALL CMISSField_VariableLabelSet(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,'Materials',Err)
   CALL CMISSEquationsSet_MaterialsCreateFinish(EquationsSet,Err)
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1,1.0_CMISSDP, &
     & Err)
@@ -300,6 +302,7 @@ PROGRAM LINEARPOISSONEXAMPLE
   !Create the source field
   CALL CMISSField_Initialise(SourceField,Err)
   CALL CMISSEquationsSet_SourceCreateStart(EquationsSet,SourceFieldUserNumber,SourceField,Err)
+  CALL CMISSField_VariableLabelSet(SourceField,CMISS_FIELD_U_VARIABLE_TYPE,'Source',Err)
   CALL CMISSEquationsSet_SourceCreateFinish(EquationsSet,Err)
 
   !Create the equations set equations
