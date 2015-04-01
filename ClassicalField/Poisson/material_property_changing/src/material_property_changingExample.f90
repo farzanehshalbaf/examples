@@ -346,16 +346,17 @@ PROGRAM LINEARPOISSONEXAMPLE
   CALL CMISSEquations_OutputTypeSet(Equations,CMISS_EQUATIONS_NO_OUTPUT,Err)
   CALL CMISSEquationsSet_EquationsCreateFinish(EquationsSet,Err)
 !==========================================================================================================
-                                 !Start the creation of a problem.
+                                 !Start the creation of a problem/ control loop
 !==========================================================================================================
+
   CALL CMISSProblem_Initialise(Problem,Err)
+  CALL CMISSControlLoop_Initialise(ControlLoop,Err)
   CALL CMISSProblem_CreateStart(ProblemUserNumber,Problem,Err)
   CALL CMISSProblem_SpecificationSet(Problem,CMISS_PROBLEM_CLASSICAL_FIELD_CLASS,CMISS_PROBLEM_POISSON_EQUATION_TYPE, &
     & CMISS_PROBLEM_TRANSIENT_SOURCE_POISSON_SUBTYPE,Err)
+  !Finish the creation of a problem.
   CALL CMISSProblem_CreateFinish(Problem,Err)
-!==========================================================================================================
-                           !Start the creation of the problem control loop
-!==========================================================================================================
+
   CALL CMISSProblem_ControlLoopCreateStart(Problem,Err)
   !Get the control loop
   CALL CMISSProblem_ControlLoopGet(Problem,CMISS_CONTROL_LOOP_NODE,ControlLoop,Err)
