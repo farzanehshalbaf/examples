@@ -395,9 +395,10 @@ PROGRAM LINEARPOISSONEXAMPLE
   CALL CMISSSolverEquations_BoundaryConditionsCreateStart(SolverEquations,BoundaryConditions,Err)
 
 !=== Drichlet at the center of the guard:
+
   CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,1269,1, &
     & CMISS_BOUNDARY_CONDITION_FIXED,0.0_CMISSDP,Err)
-!====
+
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
  
 !==========================================================================================================
