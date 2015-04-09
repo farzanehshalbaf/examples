@@ -258,7 +258,7 @@ PROGRAM LINEARPOISSONEXAMPLE
   CALL CMISSEquationsSet_Initialise(EquationsSet,Err)
   CALL CMISSField_Initialise(EquationsSetField,Err)
   CALL CMISSEquationsSet_CreateStart(EquationsSetUserNumber,Region,GeometricField,CMISS_EQUATIONS_SET_CLASSICAL_FIELD_CLASS, &
-    & CMISS_EQUATIONS_SET_POISSON_EQUATION_TYPE,CMISS_EQUATIONS_SET_TRANSIENT_SOURCE_POISSON_SUBTYPE,EquationsSetFieldUserNumber, &
+    & CMISS_EQUATIONS_SET_POISSON_EQUATION_TYPE,CMISS_EQUATIONS_SET_CONSTANT_SOURCE_POISSON_SUBTYPE,EquationsSetFieldUserNumber, &
     & EquationsSetField,EquationsSet,Err)
   CALL CMISSEquationsSet_CreateFinish(EquationsSet,Err)
 
@@ -353,7 +353,7 @@ PROGRAM LINEARPOISSONEXAMPLE
   CALL CMISSControlLoop_Initialise(ControlLoop,Err)
   CALL CMISSProblem_CreateStart(ProblemUserNumber,Problem,Err)
   CALL CMISSProblem_SpecificationSet(Problem,CMISS_PROBLEM_CLASSICAL_FIELD_CLASS,CMISS_PROBLEM_POISSON_EQUATION_TYPE, &
-    & CMISS_PROBLEM_TRANSIENT_SOURCE_POISSON_SUBTYPE,Err)
+    & CMISS_PROBLEM_QUASISTATIC_LINEAR_SOURCE_POISSON_SUBTYPE,Err)
   !Finish the creation of a problem.
   CALL CMISSProblem_CreateFinish(Problem,Err)
 
@@ -368,14 +368,13 @@ PROGRAM LINEARPOISSONEXAMPLE
 !==========================================================================================================
   !Start the creation of the problem solvers
 !==========================================================================================================
+  !Start the creation of the problem solvers
   CALL CMISSSolver_Initialise(Solver,Err)
-  CALL CMISSSolver_Initialise(LinearSolver,Err)
   CALL CMISSProblem_SolversCreateStart(Problem,Err)
   CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,1,Solver,Err)
   CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
-  CALL CMISSSolver_DynamicLinearSolverGet(Solver,LinearSolver,Err)
-  CALL CMISSSolver_LinearIterativeMaximumIterationsSet(LinearSolver,300,Err)
-  !Finish the creation of the problem solver
+  CALL CMISSSolver_LinearTypeSet(Solver,CMISS_SOLVER_LINEAR_DIRECT_SOLVE_TYPE,Err)
+  !CALL CMISSSolver_LinearIterativeMaximumIterationsSet(Solver,300,Err)
   CALL CMISSProblem_SolversCreateFinish(Problem,Err)
 
   !Start the creation of the problem solver equations
@@ -404,8 +403,10 @@ PROGRAM LINEARPOISSONEXAMPLE
 !==========================================================================================================
 !                                 !Solve the problem
 !==========================================================================================================
-
+  !Solve the problem
+  WRITE(*,'(A)') "Solving problem..."
   CALL CMISSProblem_Solve(Problem,Err)
+  WRITE(*,'(A)') "Problem solved!"
 
   !EXPORT_FIELD=.TRUE.
   !IF(EXPORT_FIELD) THEN
