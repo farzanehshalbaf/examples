@@ -398,6 +398,8 @@ PROGRAM LINEARPOISSONEXAMPLE
 
   CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,1269,1, &
     & CMISS_BOUNDARY_CONDITION_FIXED,0.0_CMISSDP,Err)
+  !CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,1200,1, &
+   ! & CMISS_BOUNDARY_CONDITION_FIXED,5.0_CMISSDP,Err)
 
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
  
@@ -411,11 +413,11 @@ PROGRAM LINEARPOISSONEXAMPLE
 
   !EXPORT_FIELD=.TRUE.
   !IF(EXPORT_FIELD) THEN
-  CALL CMISSFields_Initialise(Fields,Err)
-  CALL CMISSFields_Create(Region,Fields,Err)
-  CALL CMISSFields_NodesExport(Fields,"Poisson","FORTRAN",Err)
-  CALL CMISSFields_ElementsExport(Fields,"Poisson","FORTRAN",Err)
-  CALL CMISSFields_Finalise(Fields,Err)
+ ! CALL CMISSFields_Initialise(Fields,Err)
+ ! CALL CMISSFields_Create(Region,Fields,Err)
+ ! CALL CMISSFields_NodesExport(Fields,"Poisson","FORTRAN",Err)
+ ! CALL CMISSFields_ElementsExport(Fields,"Poisson","FORTRAN",Err)
+ ! CALL CMISSFields_Finalise(Fields,Err)
   !ENDIF
 
   !Finialise CMISS
