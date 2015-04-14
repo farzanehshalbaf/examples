@@ -1,5 +1,5 @@
-@exnodes=<./Poisson.part*.exnode>;
-@exelems=<./Poisson.part*.exelem>;
+@exnodes=<./TIMESTP_0000        .part0*.exnode>;
+@exelems=<./TIMESTP_0000        .part0*.exelem>;
 foreach $filename (@exnodes) {
     print "Reading $filename\n";
     gfx read node "$filename";

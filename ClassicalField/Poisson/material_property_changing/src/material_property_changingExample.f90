@@ -400,7 +400,14 @@ PROGRAM LINEARPOISSONEXAMPLE
     & CMISS_BOUNDARY_CONDITION_FIXED,0.0_CMISSDP,Err)
   !CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,1200,1, &
    ! & CMISS_BOUNDARY_CONDITION_FIXED,5.0_CMISSDP,Err)
-
+  DO i=1,8
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1, &
+      & injecting_electrode(i),1,CMISS_BOUNDARY_CONDITION_FIXED,0.0_CMISSDP,Err)
+  ENDDO
+  DO i=1,8
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1, &
+      & returning_electrode(i),1,CMISS_BOUNDARY_CONDITION_FIXED,0.0_CMISSDP,Err)
+  ENDDO
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
  
 !==========================================================================================================
