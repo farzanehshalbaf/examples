@@ -3,7 +3,7 @@
  #Scale factor sets= 1
  l.Lagrange*l.Lagrange, #Scale factors=4
  #Nodes=           4
- #Fields=8
+ #Fields=10
  1) Coordinate, coordinate, rectangular cartesian, #Components=2
    x.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
@@ -76,7 +76,7 @@
      #xi1=1, #xi2=1
    6.   l.Lagrange*l.Lagrange, no modify, grid based.
      #xi1=1, #xi2=1
- 5) ModelMap, field,  rectangular cartesian, #Components=1
+ 5) Source, field,  rectangular cartesian, #Components=2
    1.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
      1.  #Values=1
@@ -91,7 +91,51 @@
      4.  #Values=1
       Value indices:     1
       Scale factor indices:    4
- 6) StateVariable, field,  rectangular cartesian, #Components=24
+   2.   l.Lagrange*l.Lagrange, no modify, standard node based.
+     #Nodes= 4
+     1.  #Values=1
+      Value indices:     1
+      Scale factor indices:    1
+     2.  #Values=1
+      Value indices:     1
+      Scale factor indices:    2
+     3.  #Values=1
+      Value indices:     1
+      Scale factor indices:    3
+     4.  #Values=1
+      Value indices:     1
+      Scale factor indices:    4
+ 6) Extracellular Potnetial, field,  rectangular cartesian, #Components=1
+   1.   l.Lagrange*l.Lagrange, no modify, standard node based.
+     #Nodes= 4
+     1.  #Values=1
+      Value indices:     1
+      Scale factor indices:    1
+     2.  #Values=1
+      Value indices:     1
+      Scale factor indices:    2
+     3.  #Values=1
+      Value indices:     1
+      Scale factor indices:    3
+     4.  #Values=1
+      Value indices:     1
+      Scale factor indices:    4
+ 7) ModelMap, field,  rectangular cartesian, #Components=1
+   1.   l.Lagrange*l.Lagrange, no modify, standard node based.
+     #Nodes= 4
+     1.  #Values=1
+      Value indices:     1
+      Scale factor indices:    1
+     2.  #Values=1
+      Value indices:     1
+      Scale factor indices:    2
+     3.  #Values=1
+      Value indices:     1
+      Scale factor indices:    3
+     4.  #Values=1
+      Value indices:     1
+      Scale factor indices:    4
+ 8) StateVariable, field,  rectangular cartesian, #Components=6
    1.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
      1.  #Values=1
@@ -176,259 +220,7 @@
      4.  #Values=1
       Value indices:     1
       Scale factor indices:    4
-   7.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   8.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   9.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   10.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   11.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   12.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   13.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   14.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   15.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   16.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   17.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   18.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   19.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   20.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   21.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   22.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   23.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   24.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
- 7) IntermediateVariable, field,  rectangular cartesian, #Components=11
+ 9) IntermediateVariable, field,  rectangular cartesian, #Components=5
    1.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
      1.  #Values=1
@@ -499,91 +291,7 @@
      4.  #Values=1
       Value indices:     1
       Scale factor indices:    4
-   6.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   7.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   8.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   9.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   10.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
-   11.   l.Lagrange*l.Lagrange, no modify, standard node based.
-     #Nodes= 4
-     1.  #Values=1
-      Value indices:     1
-      Scale factor indices:    1
-     2.  #Values=1
-      Value indices:     1
-      Scale factor indices:    2
-     3.  #Values=1
-      Value indices:     1
-      Scale factor indices:    3
-     4.  #Values=1
-      Value indices:     1
-      Scale factor indices:    4
- 8) ParametersVariable, field,  rectangular cartesian, #Components=2
+ 10) ParametersVariable, field,  rectangular cartesian, #Components=4
    1.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
      1.  #Values=1
@@ -599,6 +307,34 @@
       Value indices:     1
       Scale factor indices:    4
    2.   l.Lagrange*l.Lagrange, no modify, standard node based.
+     #Nodes= 4
+     1.  #Values=1
+      Value indices:     1
+      Scale factor indices:    1
+     2.  #Values=1
+      Value indices:     1
+      Scale factor indices:    2
+     3.  #Values=1
+      Value indices:     1
+      Scale factor indices:    3
+     4.  #Values=1
+      Value indices:     1
+      Scale factor indices:    4
+   3.   l.Lagrange*l.Lagrange, no modify, standard node based.
+     #Nodes= 4
+     1.  #Values=1
+      Value indices:     1
+      Scale factor indices:    1
+     2.  #Values=1
+      Value indices:     1
+      Scale factor indices:    2
+     3.  #Values=1
+      Value indices:     1
+      Scale factor indices:    3
+     4.  #Values=1
+      Value indices:     1
+      Scale factor indices:    4
+   4.   l.Lagrange*l.Lagrange, no modify, standard node based.
      #Nodes= 4
      1.  #Values=1
       Value indices:     1

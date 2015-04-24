@@ -65,8 +65,8 @@ PROGRAM MONODOMAINEXAMPLE
 
   !Test program parameters
 
-  REAL(CMISSDP), PARAMETER :: HEIGHT=0.140_CMISSDP
-  REAL(CMISSDP), PARAMETER :: WIDTH=6.0_CMISSDP
+  REAL(CMISSDP), PARAMETER :: HEIGHT=4.0_CMISSDP
+  REAL(CMISSDP), PARAMETER :: WIDTH=4.0_CMISSDP
   REAL(CMISSDP), PARAMETER :: LENGTH=4.0_CMISSDP
 
   INTEGER(CMISSIntg), PARAMETER :: CoordinateSystemUserNumber=1
@@ -86,14 +86,14 @@ PROGRAM MONODOMAINEXAMPLE
   INTEGER(CMISSIntg), PARAMETER :: EquationsSetUserNumber=15
   INTEGER(CMISSIntg), PARAMETER :: ProblemUserNumber=16
   INTEGER(CMISSIntg), PARAMETER :: SourceFieldUserNumber=17
-  INTEGER(CMISSIntg), PARAMETER :: independentFieldUserNumber=18
+  INTEGER(CMISSIntg), PARAMETER :: IndependentFieldUserNumber=18
 
   !Program types
   
   !Program variables
 
   INTEGER(CMISSIntg) :: NUMBER_GLOBAL_X_ELEMENTS,NUMBER_GLOBAL_Y_ELEMENTS,NUMBER_GLOBAL_Z_ELEMENTS
-  INTEGER(CMISSIntg) :: NUMBER_OF_DOMAINS
+  INTEGER(CMISSIntg) :: NUMBER_OF_DOMAINS,NUMBER_OF_GAUSS_XI
   
   INTEGER(CMISSIntg) :: MPI_IERROR
 
@@ -136,6 +136,8 @@ PROGRAM MONODOMAINEXAMPLE
   TYPE(CMISSRegionType) :: Region,WorldRegion
   TYPE(CMISSSolverType) :: Solver
   TYPE(CMISSSolverEquationsType) :: SolverEquations
+  TYPE(CMISSFieldType) :: IndependentField
+  TYPE(CMISSFieldType) :: SourceField
 
 #ifdef WIN32
   !Quickwin type
@@ -146,6 +148,7 @@ PROGRAM MONODOMAINEXAMPLE
    !Generic CMISS variables
   
   INTEGER(CMISSIntg) :: NumberOfComputationalNodes,ComputationalNodeNumber,NUMBER_OF_DIMENSION
+  INTEGER(CMISSIntg) :: INTERPOLATION_TYPE
   INTEGER(CMISSIntg) :: EquationsSetIndex,CellMLIndex
   INTEGER(CMISSIntg) :: FirstNodeNumber,LastNodeNumber
   INTEGER(CMISSIntg) :: FirstNodeDomain,LastNodeDomain
@@ -184,6 +187,7 @@ PROGRAM MONODOMAINEXAMPLE
   NUMBER_GLOBAL_Y_ELEMENTS=NUMBER_OF_ELEMENTS
   NUMBER_GLOBAL_Z_ELEMENTS=0
   NUMBER_OF_DIMENSION=2
+  INTERPOLATION_TYPE = 1
   NUMBER_OF_DOMAINS=NumberOfComputationalNodes
   
   !Broadcast the number of elements in the X & Y directions and the number of partitions to the other computational nodes
@@ -209,6 +213,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSCoordinateSystem_CreateFinish(CoordinateSystem,Err)
 !==========================================================================================================
   !Start the creation of the region
+!==========================================================================================================
   CALL CMISSRegion_Initialise(Region,Err)
   CALL CMISSRegion_CreateStart(RegionUserNumber,WorldRegion,Region,Err)
   !Set the regions coordinate system to the RC coordinate system that we have created
@@ -217,27 +222,45 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSRegion_LabelSet(Region,"Region",Err)
   !Finish the creation of the region
   CALL CMISSRegion_CreateFinish(Region,Err)
-
+!==========================================================================================================
   !Start the creation of a basis (default is trilinear lagrange)
+!==========================================================================================================
+
   CALL CMISSBasis_Initialise(Basis,Err)
   CALL CMISSBasis_CreateStart(BasisUserNumber,Basis,Err)
-  IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
-    !Set the basis to be a bilinear Lagrange basis
-    CALL CMISSBasis_NumberOfXiSet(Basis,2,Err)
-  ELSE
-    !Set the basis to be a trilinear Lagrange basis
-    CALL CMISSBasis_NumberOfXiSet(Basis,3,Err)
+  CALL CMISSBasis_NumberOfXiSet(Basis,NUMBER_OF_DIMENSION,Err)
+  CALL CMISSBasis_TypeSet(Basis,CMISS_BASIS_LAGRANGE_HERMITE_TP_TYPE,Err)
+  NUMBER_OF_GAUSS_XI=2
+  !Set the basis to be a tri-interpolation basis
+  IF (NUMBER_OF_DIMENSION==2) THEN
+    CALL CMISSBasis_InterpolationXiSet(Basis,[INTERPOLATION_TYPE,INTERPOLATION_TYPE],Err)
+  ELSEIF(NUMBER_OF_DIMENSION==3) THEN
+    CALL CMISSBasis_InterpolationXiSet(Basis,[INTERPOLATION_TYPE,INTERPOLATION_TYPE,INTERPOLATION_TYPE],Err)
   ENDIF
+
+  IF(NUMBER_OF_GAUSS_XI>0) THEN
+    IF (NUMBER_OF_DIMENSION==2) THEN
+      CALL CMISSBasis_QuadratureNumberOfGaussXiSet(Basis,[NUMBER_OF_GAUSS_XI,NUMBER_OF_GAUSS_XI],Err)
+    ELSEIF(NUMBER_OF_DIMENSION==3) THEN
+      CALL CMISSBasis_QuadratureNumberOfGaussXiSet(Basis,[NUMBER_OF_GAUSS_XI,NUMBER_OF_GAUSS_XI,NUMBER_OF_GAUSS_XI],Err)
+    ENDIF
+  ENDIF
+
   !Finish the creation of the basis
   CALL CMISSBasis_CreateFinish(Basis,Err)
 
+!==========================================================================================================
   !Start the creation of a generated mesh in the region
+!==========================================================================================================
+
   CALL CMISSGeneratedMesh_Initialise(GeneratedMesh,Err)
   CALL CMISSGeneratedMesh_CreateStart(GeneratedMeshUserNumber,Region,GeneratedMesh,Err)
   !Set up a regular x*y*z mesh
   CALL CMISSGeneratedMesh_TypeSet(GeneratedMesh,CMISS_GENERATED_MESH_REGULAR_MESH_TYPE,Err)
+
   !Set the default basis
   CALL CMISSGeneratedMesh_BasisSet(GeneratedMesh,Basis,Err)   
+
   !Define the mesh on the region
   IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
     CALL CMISSGeneratedMesh_ExtentSet(GeneratedMesh,[WIDTH,HEIGHT],Err)
@@ -250,6 +273,11 @@ PROGRAM MONODOMAINEXAMPLE
   !Finish the creation of a generated mesh in the region
   CALL CMISSMesh_Initialise(Mesh,Err)
   CALL CMISSGeneratedMesh_CreateFinish(GeneratedMesh,MeshUserNumber,Mesh,Err)
+
+!==========================================================================================================
+  !Create a decomposition
+!==========================================================================================================
+
   !Create a decomposition
   CALL CMISSDecomposition_Initialise(Decomposition,Err)
   CALL CMISSDecomposition_CreateStart(DecompositionUserNumber,Mesh,Decomposition,Err)
@@ -275,6 +303,7 @@ PROGRAM MONODOMAINEXAMPLE
 
   !Update the geometric field parameters
   CALL CMISSGeneratedMesh_GeometricParametersCalculate(GeneratedMesh,GeometricField,Err)
+
 !==========================================================================================================
 !   Equation set
 !==========================================================================================================
@@ -302,7 +331,8 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSEquationsSet_MaterialsCreateStart(EquationsSet,MaterialsFieldUserNumber,MaterialsField,Err)
   !Finish the equations set materials field variables
   CALL CMISSEquationsSet_MaterialsCreateFinish(EquationsSet,Err)
-  
+
+!======================== Material Field  
   !Set Am
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1, &
     & 193.6_CMISSDP, &
@@ -325,6 +355,23 @@ PROGRAM MONODOMAINEXAMPLE
   ! set Vr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
     & NUMBER_OF_DIMENSION+4,70.0_CMISSDP,Err)
+!======================== Source Filed
+  
+  CALL CMISSField_Initialise(SourceField,Err)
+  CALL CMISSEquationsSet_SourceCreateStart(EquationsSet,SourceFieldUserNumber,SourceField,Err)
+  CALL CMISSField_VariableLabelSet(SourceField,CMISS_FIELD_U_VARIABLE_TYPE,'Source',Err)
+  CALL CMISSEquationsSet_SourceCreateFinish(EquationsSet,Err)
+
+!======================== Independnet filed
+
+  !Create the equations set independent field variables
+  CALL CMISSField_Initialise(IndependentField,Err)
+  CALL CMISSEquationsSet_IndependentCreateStart(EquationsSet,IndependentFieldUserNumber, &
+    & IndependentField,Err)
+  !Finish the equations set dependent field variables
+  CALL CMISSEquationsSet_IndependentCreateFinish(EquationsSet,Err)
+
+
 !==========================================================================================================
 !                CellML
 !==========================================================================================================
