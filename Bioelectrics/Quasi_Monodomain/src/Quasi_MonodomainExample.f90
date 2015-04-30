@@ -111,10 +111,10 @@ PROGRAM MONODOMAINEXAMPLE
   
   REAL(CMISSDP), PARAMETER :: STIM_VALUE = 100.0_CMISSDP
   REAL(CMISSDP), PARAMETER :: STIM_STOP = 0.10_CMISSDP
-  REAL(CMISSDP), PARAMETER :: TIME_STOP = 1.50_CMISSDP
+  REAL(CMISSDP), PARAMETER :: TIME_STOP = 2.00_CMISSDP
   REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 0.00001_CMISSDP
   REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 0.001_CMISSDP
-  REAL(CMISSDP), PARAMETER :: CONDUCTIVITY = 0.1_CMISSDP
+  REAL(CMISSDP), PARAMETER :: CONDUCTIVITY = 0.014_CMISSDP
 
   !CMISS variables
 
@@ -151,7 +151,7 @@ PROGRAM MONODOMAINEXAMPLE
   INTEGER(CMISSIntg) :: INTERPOLATION_TYPE
   INTEGER(CMISSIntg) :: EquationsSetIndex,CellMLIndex
   INTEGER(CMISSIntg) :: FirstNodeNumber,LastNodeNumber
-  INTEGER(CMISSIntg) :: FirstNodeDomain,LastNodeDomain
+  INTEGER(CMISSIntg) :: FirstNodeDomain,LastNodeDomain,i
   INTEGER(CMISSIntg) :: Err
 
 #ifdef WIN32
@@ -325,17 +325,21 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSEquationsSet_DependentCreateStart(EquationsSet,DependentFieldUserNumber,DependentField,Err)
   !Finish the equations set dependent field variables
   CALL CMISSEquationsSet_DependentCreateFinish(EquationsSet,Err)
-  
+  !todo - get vm initialial value.
+  CALL CMISSField_ComponentValuesInitialise(DependentField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1, &
+    & -70.0_CMISSDP, &
+    & Err)
+  !======================== Material Field
+
   !Create the equations set materials field variables
   CALL CMISSField_Initialise(MaterialsField,Err)
   CALL CMISSEquationsSet_MaterialsCreateStart(EquationsSet,MaterialsFieldUserNumber,MaterialsField,Err)
   !Finish the equations set materials field variables
   CALL CMISSEquationsSet_MaterialsCreateFinish(EquationsSet,Err)
 
-!======================== Material Field  
   !Set Am
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1, &
-    & 193.6_CMISSDP, &
+    & 127.0_CMISSDP, &
     & Err)
   !Set Cm
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,2, &
@@ -351,18 +355,18 @@ PROGRAM MONODOMAINEXAMPLE
   ENDIF
   ! set gr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, & 
-    & NUMBER_OF_DIMENSION+3,70.0_CMISSDP,Err)
+    & NUMBER_OF_DIMENSION+3,0.070_CMISSDP,Err)
   ! set Vr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
-    & NUMBER_OF_DIMENSION+4,70.0_CMISSDP,Err)
-!======================== Source Filed
+    & NUMBER_OF_DIMENSION+4,-70.0_CMISSDP,Err)
+!======================== Source Field
   
   CALL CMISSField_Initialise(SourceField,Err)
   CALL CMISSEquationsSet_SourceCreateStart(EquationsSet,SourceFieldUserNumber,SourceField,Err)
   CALL CMISSField_VariableLabelSet(SourceField,CMISS_FIELD_U_VARIABLE_TYPE,'Source',Err)
   CALL CMISSEquationsSet_SourceCreateFinish(EquationsSet,Err)
 
-!======================== Independnet filed
+!======================== Independnet field
 
   !Create the equations set independent field variables
   CALL CMISSField_Initialise(IndependentField,Err)
@@ -370,7 +374,8 @@ PROGRAM MONODOMAINEXAMPLE
     & IndependentField,Err)
   !Finish the equations set dependent field variables
   CALL CMISSEquationsSet_IndependentCreateFinish(EquationsSet,Err)
-
+  CALL CMISSField_ComponentValuesInitialise(IndependentField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
+    & 1,00.0_CMISSDP,Err)
 
 !==========================================================================================================
 !                CellML
@@ -379,7 +384,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSCellML_Initialise(CellML,Err)
   CALL CMISSCellML_CreateStart(CellMLUserNumber,Region,CellML,Err)
   !Import a Noble 1998 model from a file
-  CALL CMISSCellML_ModelImport(CellML,"RGC.xml",RGCModelIndex,Err)
+  CALL CMISSCellML_ModelImport(CellML,"RGC_no_stimuli_current.xml",RGCModelIndex,Err)
 
  ! set the parameters that do not change over time in CellML model=> parametersfiled
   CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"sodium_channel/g_Na ",Err)
@@ -409,10 +414,7 @@ PROGRAM MONODOMAINEXAMPLE
   !Finish the creation of CellML <--> OpenCMISS field maps
   CALL CMISSCellML_FieldMapsCreateFinish(CellML,Err)
 
-  !todo - get vm initialial value.
-  CALL CMISSField_ComponentValuesInitialise(DependentField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1, &
-    & -70.0_CMISSDP, &
-    & Err)
+
   
 !  CALL CMISSDiagnosticsSetOff(Err)
 
@@ -474,7 +476,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSControlLoop_Initialise(ControlLoop,Err)
   CALL CMISSProblem_ControlLoopGet(Problem,CMISS_CONTROL_LOOP_NODE,ControlLoop,Err)
   !Set the times
-  CALL CMISSControlLoop_TimesSet(ControlLoop,0.0_CMISSDP,STIM_STOP,PDE_TIME_STEP,Err)
+  CALL CMISSControlLoop_TimesSet(ControlLoop,0.0_CMISSDP,TIME_STOP,PDE_TIME_STEP,Err)
   !Set the output
   CALL CMISSControlLoop_OutputTypeSet(ControlLoop,CMISS_CONTROL_LOOP_TIMING_OUTPUT,Err)
   !Finish creating the problem control loop
@@ -545,25 +547,46 @@ PROGRAM MONODOMAINEXAMPLE
   !Start the creation of the equations set boundary conditions
   CALL CMISSBoundaryConditions_Initialise(BoundaryConditions,Err)
   CALL CMISSSolverEquations_BoundaryConditionsCreateStart(SolverEquations,BoundaryConditions,Err)
+
+!  DO i=1,676  ! 676 is the total number of the nodes in this simulation
+
+ ! ENDDO
+
   !Finish the creation of the equations set boundary conditions
+ ! CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
+
+
+  !Set boundary conditions for the elliptic equations
+  !Set the first node to 0.0 and the last node to 1.0
+  FirstNodeNumber=1
+  IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
+    LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)
+  ELSE
+    LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)*(NUMBER_GLOBAL_Z_ELEMENTS+1)
+  ENDIF
+  CALL CMISSDecomposition_NodeDomainGet(Decomposition,FirstNodeNumber,1,FirstNodeDomain,Err)
+  CALL CMISSDecomposition_NodeDomainGet(Decomposition,LastNodeNumber,1,LastNodeDomain,Err)
+  IF(FirstNodeDomain==ComputationalNodeNumber) THEN
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,FirstNodeNumber,1, &
+      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
+  ENDIF
+  IF(LastNodeDomain==ComputationalNodeNumber) THEN
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,LastNodeNumber,1, &
+      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
+  ENDIF
+  !Finish the creation of the elliptic equations set boundary conditions
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
 
 
 
-  !Set the time loop from STIM_STOP to TIME_STOP
-  CALL CMISSControlLoop_TimesSet(ControlLoop,STIM_STOP,TIME_STOP,PDE_TIME_STEP,Err)
+ !==========================================================================================================
+!               Solve the model
+!==========================================================================================================  
+
+ !Solve the problem for the next 900 ms
+ CALL CMISSProblem_Solve(Problem,Err)
   
-  !Solve the problem for the next 900 ms
-  CALL CMISSProblem_Solve(Problem,Err)
-  
-  EXPORT_FIELD=.TRUE.
-  IF(EXPORT_FIELD) THEN
-    CALL CMISSFields_Initialise(Fields,Err)
-    CALL CMISSFields_Create(Region,Fields,Err)
-    CALL CMISSFields_NodesExport(Fields,"MonodomainExample","FORTRAN",Err)
-    CALL CMISSFields_ElementsExport(Fields,"MonodomainExample","FORTRAN",Err)
-    CALL CMISSFields_Finalise(Fields,Err)
-  ENDIF
+
   
   !Finialise CMISS
   CALL CMISSFinalise(Err)

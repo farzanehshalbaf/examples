@@ -583,7 +583,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSControlLoop_TimesSet(ControlLoop,STIM_STOP,TIME_STOP,PDE_TIME_STEP,Err)
   
   !Solve the problem for the next 900 ms
-  !CALL CMISSProblem_Solve(Problem,Err)
+  CALL CMISSProblem_Solve(Problem,Err)
   
   EXPORT_FIELD=.TRUE.
   IF(EXPORT_FIELD) THEN
