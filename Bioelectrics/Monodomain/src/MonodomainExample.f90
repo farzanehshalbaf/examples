@@ -567,7 +567,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
 
   !Solve the problem for the first STIM_STOP
-  !CALL CMISSProblem_Solve(Problem,Err)
+  CALL CMISSProblem_Solve(Problem,Err)
 
   !Now turn the stimulus off
   !Set the Stimulus at node 1

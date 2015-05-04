@@ -48,14 +48,11 @@
 !<
 
 !> Main program
+
 PROGRAM MONODOMAINEXAMPLE
 
   USE OPENCMISS
   USE MPI
-
-#ifdef WIN32
-  USE IFQWIN
-#endif
 
   IMPLICIT NONE
 
@@ -109,11 +106,10 @@ PROGRAM MONODOMAINEXAMPLE
 
   REAL(CMISSDP) :: X,Y,DISTANCE,gK1_VALUE,gNa_VALUE
   
-  REAL(CMISSDP), PARAMETER :: STIM_VALUE = 100.0_CMISSDP
-  REAL(CMISSDP), PARAMETER :: STIM_STOP = 0.10_CMISSDP
-  REAL(CMISSDP), PARAMETER :: TIME_STOP = 2.00_CMISSDP
-  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 0.00001_CMISSDP
-  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 0.001_CMISSDP
+
+  REAL(CMISSDP), PARAMETER :: TIME_STOP = 50.00_CMISSDP
+  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 1.0_CMISSDP
+  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 1.0_CMISSDP
   REAL(CMISSDP), PARAMETER :: CONDUCTIVITY = 0.014_CMISSDP
 
   !CMISS variables
@@ -148,10 +144,10 @@ PROGRAM MONODOMAINEXAMPLE
    !Generic CMISS variables
   
   INTEGER(CMISSIntg) :: NumberOfComputationalNodes,ComputationalNodeNumber,NUMBER_OF_DIMENSION
-  INTEGER(CMISSIntg) :: INTERPOLATION_TYPE
+  INTEGER(CMISSIntg) :: INTERPOLATION_TYPE,I
   INTEGER(CMISSIntg) :: EquationsSetIndex,CellMLIndex
   INTEGER(CMISSIntg) :: FirstNodeNumber,LastNodeNumber
-  INTEGER(CMISSIntg) :: FirstNodeDomain,LastNodeDomain,i
+  INTEGER(CMISSIntg) :: FirstNodeDomain,LastNodeDomain
   INTEGER(CMISSIntg) :: Err
 
 #ifdef WIN32
@@ -374,6 +370,7 @@ PROGRAM MONODOMAINEXAMPLE
     & IndependentField,Err)
   !Finish the equations set dependent field variables
   CALL CMISSEquationsSet_IndependentCreateFinish(EquationsSet,Err)
+
   CALL CMISSField_ComponentValuesInitialise(IndependentField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
     & 1,00.0_CMISSDP,Err)
 
@@ -489,7 +486,7 @@ PROGRAM MONODOMAINEXAMPLE
   !Get the first (DAE) solver
   CALL CMISSSolver_Initialise(Solver,Err)
   CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,1,Solver,Err)
-  !Set the DAE time step to by 10 us
+
   CALL CMISSSolver_DAETimeStepSet(Solver,ODE_TIME_STEP,Err)
   CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
 
@@ -501,7 +498,7 @@ PROGRAM MONODOMAINEXAMPLE
   !Get the third (DAE) solver: strang splitting
   CALL CMISSSolver_Initialise(Solver,Err)
   CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,3,Solver,Err)
-  !Set the DAE time step to by 10 us
+
   CALL CMISSSolver_DAETimeStepSet(Solver,ODE_TIME_STEP,Err)
   CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
   !Finish the creation of the problem solver
@@ -548,32 +545,29 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSBoundaryConditions_Initialise(BoundaryConditions,Err)
   CALL CMISSSolverEquations_BoundaryConditionsCreateStart(SolverEquations,BoundaryConditions,Err)
 
-!  DO i=1,676  ! 676 is the total number of the nodes in this simulation
-
- ! ENDDO
-
-  !Finish the creation of the equations set boundary conditions
- ! CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
-
 
   !Set boundary conditions for the elliptic equations
-  !Set the first node to 0.0 and the last node to 1.0
-  FirstNodeNumber=1
-  IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
-    LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)
-  ELSE
-    LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)*(NUMBER_GLOBAL_Z_ELEMENTS+1)
-  ENDIF
-  CALL CMISSDecomposition_NodeDomainGet(Decomposition,FirstNodeNumber,1,FirstNodeDomain,Err)
-  CALL CMISSDecomposition_NodeDomainGet(Decomposition,LastNodeNumber,1,LastNodeDomain,Err)
-  IF(FirstNodeDomain==ComputationalNodeNumber) THEN
-    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,FirstNodeNumber,1, &
-      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
-  ENDIF
-  IF(LastNodeDomain==ComputationalNodeNumber) THEN
-    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,LastNodeNumber,1, &
-      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
-  ENDIF
+!  FirstNodeNumber=1
+!  IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
+ !   LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)
+ ! ELSE
+ !   LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)*(NUMBER_GLOBAL_Z_ELEMENTS+1)
+ ! ENDIF
+ ! CALL CMISSDecomposition_NodeDomainGet(Decomposition,FirstNodeNumber,1,FirstNodeDomain,Err)
+ ! IF(FirstNodeDomain==ComputationalNodeNumber) THEN
+!    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,FirstNodeNumber,1, &
+!      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
+ ! ENDIF
+
+  DO I=1,298
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,I,1, &
+      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err) 
+  ENDDO
+
+  DO I=300,676
+    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,I,1, &
+      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err) 
+  ENDDO
   !Finish the creation of the elliptic equations set boundary conditions
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
 
@@ -583,7 +577,7 @@ PROGRAM MONODOMAINEXAMPLE
 !               Solve the model
 !==========================================================================================================  
 
- !Solve the problem for the next 900 ms
+ !Solve the problem for the next 2 ms
  CALL CMISSProblem_Solve(Problem,Err)
   
 
