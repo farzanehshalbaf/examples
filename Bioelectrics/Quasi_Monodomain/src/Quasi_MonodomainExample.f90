@@ -108,8 +108,8 @@ PROGRAM MONODOMAINEXAMPLE
   
 
   REAL(CMISSDP), PARAMETER :: TIME_STOP = 50.00_CMISSDP
-  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 1.0_CMISSDP
-  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 1.0_CMISSDP
+  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 0.00001_CMISSDP
+  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 0.01_CMISSDP
   REAL(CMISSDP), PARAMETER :: CONDUCTIVITY = 0.014_CMISSDP
 
   !CMISS variables
@@ -351,7 +351,7 @@ PROGRAM MONODOMAINEXAMPLE
   ENDIF
   ! set gr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, & 
-    & NUMBER_OF_DIMENSION+3,0.070_CMISSDP,Err)
+    & NUMBER_OF_DIMENSION+3,0.07_CMISSDP,Err)
   ! set Vr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
     & NUMBER_OF_DIMENSION+4,-70.0_CMISSDP,Err)
@@ -496,11 +496,11 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
 
   !Get the third (DAE) solver: strang splitting
-  CALL CMISSSolver_Initialise(Solver,Err)
-  CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,3,Solver,Err)
+ ! CALL CMISSSolver_Initialise(Solver,Err)
+ ! CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,3,Solver,Err)
 
-  CALL CMISSSolver_DAETimeStepSet(Solver,ODE_TIME_STEP,Err)
-  CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
+ ! CALL CMISSSolver_DAETimeStepSet(Solver,ODE_TIME_STEP,Err)
+ ! CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
   !Finish the creation of the problem solver
   CALL CMISSProblem_SolversCreateFinish(Problem,Err)
 
@@ -528,8 +528,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSSolverEquations_Initialise(SolverEquations,Err)
   CALL CMISSSolver_SolverEquationsGet(Solver,SolverEquations,Err)
   !Set the solver equations sparsity
-  CALL CMISSSolverEquations_SparsityTypeSet(SolverEquations,CMISS_SOLVER_SPARSE_MATRICES,Err)
-  !CALL CMISSSolverEquations_SparsityTypeSet(SolverEquations,CMISS_SOLVER_FULL_MATRICES,Err)  
+  CALL CMISSSolverEquations_SparsityTypeSet(SolverEquations,CMISS_SOLVER_SPARSE_MATRICES,Err) 
   !Add in the equations set
   CALL CMISSSolverEquations_EquationsSetAdd(SolverEquations,EquationsSet,EquationsSetIndex,Err)
   !Finish the creation of the problem solver equations
@@ -547,27 +546,14 @@ PROGRAM MONODOMAINEXAMPLE
 
 
   !Set boundary conditions for the elliptic equations
-!  FirstNodeNumber=1
-!  IF(NUMBER_GLOBAL_Z_ELEMENTS==0) THEN
- !   LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)
- ! ELSE
- !   LastNodeNumber=(NUMBER_GLOBAL_X_ELEMENTS+1)*(NUMBER_GLOBAL_Y_ELEMENTS+1)*(NUMBER_GLOBAL_Z_ELEMENTS+1)
- ! ENDIF
- ! CALL CMISSDecomposition_NodeDomainGet(Decomposition,FirstNodeNumber,1,FirstNodeDomain,Err)
- ! IF(FirstNodeDomain==ComputationalNodeNumber) THEN
-!    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,FirstNodeNumber,1, &
-!      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err)
- ! ENDIF
 
-  DO I=1,298
+
+  DO I=2,676
     CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,I,1, &
       & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err) 
   ENDDO
 
-  DO I=300,676
-    CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,I,1, &
-      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err) 
-  ENDDO
+
   !Finish the creation of the elliptic equations set boundary conditions
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
 
