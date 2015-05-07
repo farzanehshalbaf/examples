@@ -493,7 +493,7 @@ PROGRAM MONODOMAINEXAMPLE
   !Get the second (Parabolic) solver
   CALL CMISSSolver_Initialise(Solver,Err)
   CALL CMISSProblem_SolverGet(Problem,CMISS_CONTROL_LOOP_NODE,2,Solver,Err)
-  CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_PROGRESS_OUTPUT,Err)
+  CALL CMISSSolver_OutputTypeSet(Solver,CMISS_SOLVER_matrix_OUTPUT,Err)
 
   !Get the third (DAE) solver: strang splitting
  ! CALL CMISSSolver_Initialise(Solver,Err)
