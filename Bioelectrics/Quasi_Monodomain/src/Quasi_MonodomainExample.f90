@@ -107,9 +107,9 @@ PROGRAM MONODOMAINEXAMPLE
   REAL(CMISSDP) :: X,Y,DISTANCE,gK1_VALUE,gNa_VALUE
   
 
-  REAL(CMISSDP), PARAMETER :: TIME_STOP = 50.00_CMISSDP
-  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 0.00001_CMISSDP
-  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 0.01_CMISSDP
+  REAL(CMISSDP), PARAMETER :: TIME_STOP = 15.00_CMISSDP
+  REAL(CMISSDP), PARAMETER :: ODE_TIME_STEP = 0.001_CMISSDP
+  REAL(CMISSDP), PARAMETER :: PDE_TIME_STEP = 0.001_CMISSDP
   REAL(CMISSDP), PARAMETER :: CONDUCTIVITY = 0.014_CMISSDP
 
   !CMISS variables
@@ -323,7 +323,7 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSEquationsSet_DependentCreateFinish(EquationsSet,Err)
   !todo - get vm initialial value.
   CALL CMISSField_ComponentValuesInitialise(DependentField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,1, &
-    & -70.0_CMISSDP, &
+    & -75.0_CMISSDP, &
     & Err)
   !======================== Material Field
 
@@ -339,7 +339,7 @@ PROGRAM MONODOMAINEXAMPLE
     & Err)
   !Set Cm
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,2, &
-    & 0.010_CMISSDP,Err)
+    & 1.0_CMISSDP,Err)
   !Set conductivity
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE,3, &
     & CONDUCTIVITY,Err)
@@ -351,10 +351,10 @@ PROGRAM MONODOMAINEXAMPLE
   ENDIF
   ! set gr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, & 
-    & NUMBER_OF_DIMENSION+3,0.07_CMISSDP,Err)
+    & NUMBER_OF_DIMENSION+3,7.0_CMISSDP,Err)
   ! set Vr
   CALL CMISSField_ComponentValuesInitialise(MaterialsField,CMISS_FIELD_U_VARIABLE_TYPE,CMISS_FIELD_VALUES_SET_TYPE, &
-    & NUMBER_OF_DIMENSION+4,-70.0_CMISSDP,Err)
+    & NUMBER_OF_DIMENSION+4,-75.0_CMISSDP,Err)
 !======================== Source Field
   
   CALL CMISSField_Initialise(SourceField,Err)
@@ -381,18 +381,16 @@ PROGRAM MONODOMAINEXAMPLE
   CALL CMISSCellML_Initialise(CellML,Err)
   CALL CMISSCellML_CreateStart(CellMLUserNumber,Region,CellML,Err)
   !Import a Noble 1998 model from a file
-  CALL CMISSCellML_ModelImport(CellML,"RGC_no_stimuli_current.xml",RGCModelIndex,Err)
+  CALL CMISSCellML_ModelImport(CellML,"hodgkin_huxley_1952.xml",RGCModelIndex,Err)
 
  ! set the parameters that do not change over time in CellML model=> parametersfiled
   CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"sodium_channel/g_Na ",Err)
-  CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"potassuim_Ca_current/g_KCa ",Err)
   CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"potassium_channel/g_K ",Err)
-  CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"potassuim_A_channel/g_KA ",Err)
+  CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"leakage_current/g_L ",Err)
+  CALL CMISSCellML_VariableSetAsKnown(CellML,RGCModelIndex,"membrane/Cm",Err)
 
 ! set what you weant to calculate=>intermidiatefields
   CALL CMISSCellML_VariableSetAsWanted(CellML,RGCModelIndex,"membrane/i_K",Err)
-  CALL CMISSCellML_VariableSetAsWanted(CellML,RGCModelIndex,"membrane/i_KA",Err)
-  CALL CMISSCellML_VariableSetAsWanted(CellML,RGCModelIndex,"membrane/i_KCa",Err)
   CALL CMISSCellML_VariableSetAsWanted(CellML,RGCModelIndex,"membrane/i_L",Err)
   CALL CMISSCellML_VariableSetAsWanted(CellML,RGCModelIndex,"membrane/i_Na",Err)
   !Finish the CellML environment
@@ -548,11 +546,10 @@ PROGRAM MONODOMAINEXAMPLE
   !Set boundary conditions for the elliptic equations
 
 
-  DO I=2,676
+  DO I=4,676
     CALL CMISSBoundaryConditions_SetNode(BoundaryConditions,DependentField,CMISS_FIELD_U_VARIABLE_TYPE,1,1,I,1, &
-      & CMISS_BOUNDARY_CONDITION_FIXED,-70.0_CMISSDP,Err) 
+      & CMISS_BOUNDARY_CONDITION_FIXED,-75.0_CMISSDP,Err) 
   ENDDO
-
 
   !Finish the creation of the elliptic equations set boundary conditions
   CALL CMISSSolverEquations_BoundaryConditionsCreateFinish(SolverEquations,Err)
